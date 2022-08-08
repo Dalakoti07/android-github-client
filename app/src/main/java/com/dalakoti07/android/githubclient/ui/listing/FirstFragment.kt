@@ -1,4 +1,4 @@
-package com.dalakoti07.android.githubclient
+package com.dalakoti07.android.githubclient.ui.listing
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.dalakoti07.android.githubclient.R
 import com.dalakoti07.android.githubclient.databinding.FragmentFirstBinding
 
 /**
