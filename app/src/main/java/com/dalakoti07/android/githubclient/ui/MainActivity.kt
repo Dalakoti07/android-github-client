@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.viewModels
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.dalakoti07.android.githubclient.databinding.ActivityMainBinding
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.isLoading.observe(this){ loading->
-            binding.progressBar.isVisible = loading
+            binding.progressBar.isInvisible = !loading
         }
 
         viewModel.allPrs.observe(this) { prs->

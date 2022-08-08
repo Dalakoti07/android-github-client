@@ -8,10 +8,12 @@ import com.dalakoti07.android.core.data.models.PullRequest
 import com.dalakoti07.android.core.data.state.Resource
 import com.dalakoti07.android.core.usecases.FetchPullRequestsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 private const val TAG = "MainViewModel"

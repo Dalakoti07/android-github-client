@@ -4,10 +4,13 @@ import com.dalakoti07.android.core.data.models.PullRequest
 import com.dalakoti07.android.core.data.state.ErrorResponse
 import com.dalakoti07.android.core.data.state.Failure
 import com.dalakoti07.android.core.data.state.Resource
+import com.dalakoti07.android.core.utils.DateFormatter
 import com.dalakoti07.android.core.repository.GithubRepository
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import org.json.JSONException
 import javax.inject.Inject
 
@@ -15,17 +18,24 @@ class FetchPullRequestsUseCase @Inject constructor(
     private val repository: GithubRepository,
 ) {
 
-    operator fun invoke(page: Int): Flow<Resource<List<PullRequest>>> = flow {
+    private val dateFormatter = DateFormatter()
+
+    operator fun invoke(page: Int): Flow<Resource<List<PullRequest>>> = flow{
         try {
             emit(Resource.Loading<List<PullRequest>>())
             val response = repository.fetchPullRequests(page)
             if (response.isSuccessful) {
                 val responseList = response.body()!!
-                val finalList = responseList.map {
 
+                // do mapping for some thing computational in IO thread
+                withContext(Dispatchers.IO){
+                    responseList.map {
+                        it.closedAt = dateFormatter.formatDate(it.closedAt)
+                        it.createdAt = dateFormatter.formatDate(it.createdAt)
+                    }
                 }
                 emit(
-                    Resource.Success<List<PullRequest>>(response.body()!!)
+                    Resource.Success<List<PullRequest>>(responseList)
                 )
             } else {
                 val json = response.errorBody()?.string()

@@ -10,9 +10,9 @@ data class PullRequest(
     val title: String,
     val user: User,
     @SerializedName("created_at")
-    val createdAt: String,
+    var createdAt: String,
     @SerializedName("closed_at")
-    val closedAt: String,
+    var closedAt: String,
 ){
 
     class DiffUtilCallBack : DiffUtil.ItemCallback<PullRequest>() {
