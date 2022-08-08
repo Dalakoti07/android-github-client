@@ -5,6 +5,6 @@ import retrofit2.Response
 
 interface GithubRepository {
 
-    suspend fun fetchPullRequests(): Response<List<PullRequest>>
+    suspend fun fetchPullRequests(page: Int): Response<List<PullRequest>>
 
 }

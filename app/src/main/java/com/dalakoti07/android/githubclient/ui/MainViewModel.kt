@@ -25,25 +25,45 @@ class MainViewModel @Inject constructor(
     val isLoading: LiveData<Boolean>
         get() = _isLoading
 
-    private val _allPrs = MutableLiveData<List<PullRequest>>()
+    private val emptyList = emptyList<PullRequest>()
+
+    private val _allPrs = MutableLiveData(emptyList)
     val allPrs: LiveData<List<PullRequest>>
         get() = _allPrs
 
     private val _events = Channel<String>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
+    private var lastFetchPage = 0
+
+    private var isExhausted = false
+
     init {
         getAllPullRequests()
     }
 
     private fun getAllPullRequests() {
-        fetchPullRequestsUseCase()
+        // return if its still loading or list is exhausted
+        if (_isLoading.value == true || isExhausted)
+            return
+        fetchPullRequestsUseCase(lastFetchPage + 1)
             .onEach { response ->
                 when (response) {
                     is Resource.Success<List<PullRequest>> -> {
                         _isLoading.value = false
-                        response.data?.let {
-                            _allPrs.value = it
+                        response.data?.let { list ->
+                            val currentList: MutableList<PullRequest> =
+                                if (allPrs.value != null)
+                                    allPrs.value!!.toMutableList()
+                                else {
+                                    mutableListOf()
+                                }
+                            currentList.addAll(list)
+                            _allPrs.value = currentList
+                            lastFetchPage++
+                            if (list.size < 10) {
+                                isExhausted = true
+                            }
                         }
                     }
                     is Resource.Error<List<PullRequest>> -> {
@@ -60,5 +80,8 @@ class MainViewModel @Inject constructor(
             )
     }
 
+    fun loadNextPage() {
+        getAllPullRequests()
+    }
 
 }

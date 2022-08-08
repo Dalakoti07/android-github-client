@@ -5,6 +5,7 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.dalakoti07.android.githubclient.databinding.ActivityMainBinding
 import com.dalakoti07.android.githubclient.ui.adapters.PullRequestsAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,6 +53,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.rvPrs.adapter = pullRequestsAdapter
+
+        binding.rvPrs.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!binding.rvPrs.canScrollVertically(1)) {
+                    viewModel.loadNextPage()
+                }
+            }
+        })
     }
 
 }

@@ -15,11 +15,15 @@ class FetchPullRequestsUseCase @Inject constructor(
     private val repository: GithubRepository,
 ) {
 
-    operator fun invoke(): Flow<Resource<List<PullRequest>>> = flow {
+    operator fun invoke(page: Int): Flow<Resource<List<PullRequest>>> = flow {
         try {
             emit(Resource.Loading<List<PullRequest>>())
-            val response = repository.fetchPullRequests()
+            val response = repository.fetchPullRequests(page)
             if (response.isSuccessful) {
+                val responseList = response.body()!!
+                val finalList = responseList.map {
+
+                }
                 emit(
                     Resource.Success<List<PullRequest>>(response.body()!!)
                 )

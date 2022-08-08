@@ -11,6 +11,7 @@ interface GithubService {
     suspend fun getSupportTicketCategories(
         @Query("state") state: String,
         @Query("per_page") itemPerPage: Int,
+        @Query("page") page: Int,
     ): Response<List<PullRequest>>
 
 }

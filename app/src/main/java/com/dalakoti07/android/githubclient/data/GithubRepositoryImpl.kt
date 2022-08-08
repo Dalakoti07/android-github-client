@@ -10,10 +10,11 @@ class GithubRepositoryImpl @Inject constructor(
     private val githubService: GithubService
 ): GithubRepository {
 
-    override suspend fun fetchPullRequests(): Response<List<PullRequest>> {
+    override suspend fun fetchPullRequests(page: Int): Response<List<PullRequest>> {
         return githubService.getSupportTicketCategories(
             state = "closed",
             itemPerPage = 10,
+            page = page,
         )
     }
 
