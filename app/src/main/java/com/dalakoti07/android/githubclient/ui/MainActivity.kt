@@ -1,21 +1,14 @@
 package com.dalakoti07.android.githubclient.ui
 
 import android.os.Bundle
-import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.viewModels
-import com.dalakoti07.android.core.usecases.FetchPullRequestsUseCase
+import androidx.core.view.isVisible
 import com.dalakoti07.android.githubclient.databinding.ActivityMainBinding
+import com.dalakoti07.android.githubclient.ui.adapters.PullRequestsAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 private const val TAG = "MainActivity"
 
@@ -25,21 +18,40 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    private lateinit var pullRequestsAdapter: PullRequestsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setViews()
+
+        setObservers()
+    }
+
+    private fun setObservers() {
         // show error events
         viewModel.events.onEach {
             Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
         }
 
-        viewModel.allPrs.observe(this){
-            Log.d(TAG, "response list: ${it.size} ")
-            Log.d(TAG, "response: $it ")
+        viewModel.isLoading.observe(this){ loading->
+            binding.progressBar.isVisible = loading
         }
+
+        viewModel.allPrs.observe(this) { prs->
+            pullRequestsAdapter.submitList(prs)
+        }
+    }
+
+    private fun setViews() {
+        pullRequestsAdapter = PullRequestsAdapter { item->
+            // launch chrome
+        }
+
+        binding.rvPrs.adapter = pullRequestsAdapter
     }
 
 }

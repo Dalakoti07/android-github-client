@@ -7,5 +7,35 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:background="@color/white"
+        android:elevation="4dp"
+        app:title="Github Client"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="@dimen/space_lg"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="5"
+        tools:listitem="@layout/item_pull_request"
+        android:id="@+id/rv_prs"
+        app:layout_constraintBottom_toTopOf="@id/progress_bar"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ProgressBar
+        tools:visibility="visible"
+        android:visibility="invisible"
+        android:indeterminateTint="@color/purple_200"
+        android:id="@+id/progress_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
