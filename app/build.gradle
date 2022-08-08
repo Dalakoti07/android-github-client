@@ -70,4 +70,8 @@ dependencies {
     // coil
     implementation 'io.coil-kt:coil:2.0.0-rc02'
     implementation 'io.coil-kt:coil-gif:2.0.0-rc02'
+
+    // navigation
+    implementation("androidx.navigation:navigation-fragment-ktx:2.5.1")
+    implementation("androidx.navigation:navigation-ui-ktx:2.5.1")
 }
