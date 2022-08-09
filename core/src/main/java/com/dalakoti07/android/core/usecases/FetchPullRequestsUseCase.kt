@@ -8,21 +8,24 @@ import com.dalakoti07.android.core.utils.DateFormatter
 import com.dalakoti07.android.core.repository.GithubRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FetchPullRequestsUseCase @Inject constructor(
     private val repository: GithubRepository,
 ) {
 
     private val dateFormatter = DateFormatter()
 
-    operator fun invoke(page: Int): Flow<Resource<List<PullRequest>>> = flow{
+    operator fun invoke(page: Int): Flow<Resource<List<PullRequest>>> = channelFlow{
         try {
-            emit(Resource.Loading<List<PullRequest>>())
+            send(Resource.Loading<List<PullRequest>>())
             val response = repository.fetchPullRequests(page)
             if (response.isSuccessful) {
                 val responseList = response.body()!!
@@ -34,14 +37,14 @@ class FetchPullRequestsUseCase @Inject constructor(
                         it.createdAt = dateFormatter.formatDate(it.createdAt)
                     }
                 }
-                emit(
+                send(
                     Resource.Success<List<PullRequest>>(responseList)
                 )
             } else {
                 val json = response.errorBody()?.string()
                 val error = Gson().fromJson(json, ErrorResponse::class.java)
                 if (response.code() == 401) {
-                    emit(
+                    send(
                         Resource.Error<List<PullRequest>>(
                             Pair(
                                 Failure.UnauthorizedError, error
@@ -49,7 +52,7 @@ class FetchPullRequestsUseCase @Inject constructor(
                         )
                     )
                 } else {
-                    emit(
+                    send(
                         Resource.Error<List<PullRequest>>(
                             Pair(
                                 Failure.ServerError,
@@ -61,7 +64,7 @@ class FetchPullRequestsUseCase @Inject constructor(
             }
         } catch (exception: Exception) {
             if (exception is JSONException) {
-                emit(
+                send(
                     Resource.Error<List<PullRequest>>(
                         Pair(
                             Failure.ParsingError,
@@ -70,7 +73,7 @@ class FetchPullRequestsUseCase @Inject constructor(
                     )
                 )
             } else {
-                emit(
+                send(
                     Resource.Error<List<PullRequest>>(
                         Pair(
                             Failure.NetworkConnection,
